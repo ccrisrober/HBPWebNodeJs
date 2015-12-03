@@ -1,0 +1,80 @@
+extends ../../../../layouts/account
+
+- var size = 75;		// Size for text area
+
+
+block head
+	title Experiment Library
+
+block neck
+	link(rel='stylesheet', href='/views/account/index.min.css?#{cacheBreaker}')
+	style.
+		textarea {
+			resize: vertical;
+		}
+
+block feet
+	script(src="/vendor/bootstrap-filestyle/bootstrap-filestyle.js")
+	script.
+		/*//$(":file").filestyle({disabled: true});
+		$("#new").click(function() {
+			$("#files").append("<input type=\"file\" name=\"myFile\" class=\"form-control\">");
+		});
+		$("#remove").click(function() {
+			var n = $( "#files" ).find("input").length;
+			if(n == 1) {
+				alert("Tiene que haber mínimo uno.");
+			}
+			else {
+				$("#files input:last-child").remove();
+			}
+		});*/
+
+block body
+	.row
+		.col-xs-12
+			.page-header
+				h1 Upload experiments
+
+	.row.clearfix
+		.col-xs-12
+			- if (typeof(okCode) !== 'undefined'){
+				.alert.alert-success.alert-dismissable
+					button.close(type='button', data-dismiss='alert', aria-hidden='true') ×
+					h4
+						| Perfect!
+					div= okCode
+			-}
+			- if (typeof(errorCode) !== 'undefined'){
+				.alert.alert-danger.alert-dismissable
+					button.close(type='button', data-dismiss='alert', aria-hidden='true') ×
+					h4
+						| Error!
+					div= errorCode
+			-}
+			.jumbotron
+				h2 Upload
+				form(action="/account/experiments/uploads/", method="post", enctype="multipart/form-data", class="form-horizontal")
+					#files.row
+						.form-group
+							label(for="myFile", class="col-sm-2 control-label") File:
+							.col-sm-10
+								input.form-control(type='file', name='myFile')
+
+						.form-group
+							label(for="atlas", class="col-sm-2 control-label") Atlas File:
+							.col-sm-10
+								input.form-control(type="checkbox", name="isAtlas")
+								span.help-block
+									| If you check this option, you verify that it is up an atlas generated several experiments, and not a single experiment.
+
+						.form-group
+							label(for="description", class="col-sm-2 control-label", maxLength='5') Description:
+							.col-sm-10
+								textarea.form-control(name='description', maxlength='#{size}')
+								span.help-block
+									| (Optional): Enter a description of at least 1 character.
+
+					input(type='hidden', name='_csrf', id="_csrf" value='#{code}')
+					hr
+					button.btn.btn-success.btn-sm(type="submit") Submit

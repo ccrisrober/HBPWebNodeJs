@@ -1,0 +1,35 @@
+extends ../../layouts/default
+
+block head
+	title Sign Up
+
+block neck
+	link(rel='stylesheet', href='/views/signup/index.min.css?#{cacheBreaker}')
+
+block feet
+	script(src='/views/signup/index.min.js?#{cacheBreaker}')
+
+block body
+	block body
+		div.row
+			div.col-xs-12
+				div.page-header
+					h1 Experiment Library
+		div.row
+			div.col-xs-12
+				div.table-responsive
+					table.table.table-striped
+						thead
+							th Operative system
+							th Version
+							th Download
+						tbody
+							-each system in opsystem
+								tr
+									td= system.so
+									td
+										a(href="/software/#{system.so}/#{system.arch}") #{system.arch}
+									td
+										a(href="/software/#{system.so}#{system.vers}/#{system.arch}") #{system.vers}
+			div.col-xs-12
+				a(href="/software/#{actual.platform}/#{actual.arch}") Tu descarga óptima :D

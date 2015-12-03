@@ -1,0 +1,33 @@
+extends ../../../layouts/admin
+
+block head
+	title F.A.Q. / Details
+
+block feet
+	script(src="/views/admin/categories/details.min.js#{cacheBreader}")
+
+block body
+	.row
+		.col-xs-12
+			#header
+			#details
+			#delete
+
+	script(type="text/template", id="tmpl-header")
+		.page-header
+			h1
+				a(href="/admin/categorires/") F.A.Q.
+				| / <%- question %>
+
+	script(type="text/template", id="tmpl-details")
+		fieldset
+			legend  Details
+			div.alerts
+				|<%- _.each(errors, function(err) { %>
+				.alert.alert.danger.alert-dismissable
+					button.close(type="button", data-dismiss="alert") &times;
+					|<%- err %>
+				|<% }); %>
+				|<% if (success) { %>
+				.alert.alert-info.alert-dismissable
+					button.close(type="button", data-dismiss="alert") &times;

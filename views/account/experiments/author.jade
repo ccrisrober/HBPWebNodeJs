@@ -1,0 +1,157 @@
+extends ../../../layouts/account
+
+block head
+	title Experiment Library
+	style.
+		.detail-view th {
+			text-align: right;
+			width: 160px;
+		}
+		thead tr th, tbody tr td {
+			text-align: center;
+		}
+
+block neck
+	link(rel='stylesheet', href='/views/account/index.min.css?#{cacheBreaker}')
+
+block feet
+	script(src='/views/account/index.min.js?#{cacheBreaker}')
+	script.
+		$(document).ready(function() {
+			//$('#list tr').find('th:last-child, td:last-child').remove();
+
+			//$("#list tr:first > th:last").remove();	// Remove "erase"
+			//$("#list tr:first > th:last").remove();	// Remove "visibility"
+			$(".visibility").on("click", function() {
+				var idexp = $(this).data("table");
+				alert(idexp);
+
+				var button = $(this);
+				console.log(button.html());
+
+				$.ajax( {
+					url: "/account/experiments/update",
+					data: "_csrf=" + $("#_csrf").val() + "&" + "experiment=" + idexp,
+					type: "put",
+					beforeSend: function() {
+						$("#visibilityblock").html("");
+					},
+					success: function(data) {
+						console.log(data);
+						if(data.ok) {
+							console.log(data.ok);
+							console.log(data.visible);
+							console.log(button.html());
+							button.addClass(data.visible? "btn-warning" : "btn-success");
+							button.removeClass(!data.visible? "btn-warning" : "btn-success");
+							button.html(data.visible ? "Enable": "Disable");
+						} else {
+
+						}
+					},
+					error: function(xhr, status, error) {
+						console.log("Error: " + error.message);
+						console.log(status);
+						console.log(xhr);
+					}
+				});
+
+			});
+			$(".erase").on("click", function() {
+				var idexp = $(this).data("table");
+				//alert(idexp);
+
+				var accept = confirm("¿Deseas borrar este experimento?");
+				console.log(accept);
+				if(accept) {
+					//alert("_csrf=" + $("#_csrf").val() + "&" + "experiment=" + idexp);
+					$.ajax( {
+						url: "/account/experiments/delete",
+						data: "_csrf=" + $("#_csrf").val() + "&" + "experiment=" + idexp,
+						type: "delete",
+						success: function(data) {
+							console.log("Success: " + data);
+							if(data.ok) {
+								//alert(data.ok);
+								$("#" + idexp +"tr").remove();
+								if($("#list > tbody > tr").length  === 0) {
+									var tbodyThs = $("#list tr:first > th");
+									tbodyThs[tbodyThs.length - 1].remove();		// Remove "erase"
+									tbodyThs[tbodyThs.length - 2].remove();		// Remove "visibility"
+									$("#list tbody").append('<tr><td colspan=\"6\">No tienes más experimentos.</td></tr>');
+								}
+								//location.href = "/account/experiments/author/" + data.id;
+							} else {
+								alert(data.error);
+							}
+						},
+						error: function(xhr, status, error) {
+							console.log("Error: " + error.message);
+							console.log(status);
+							console.log(xhr);
+							alert("Se ha producido un error");
+						}
+					});
+				}
+			});
+		});
+		/*$(document).ready(function(){
+		    $("#myTab a").click(function(e){
+		    	e.preventDefault();
+		    	$(this).tab('show');
+		    });
+		});*/
+
+block body
+	div.row
+		div.col-xs-12
+			div.page-header
+				h1 Experiment Author List
+	div.row
+		div.col-xs-12
+			div.table-responsive
+				table.table.table-striped#list
+					thead
+						tr.active
+							th Name
+							th Experiment Type
+							th Date Upload
+							th Date Development
+							th Tabs
+							th Show
+							- if (exps && exps.length > 0) {
+								th Visibility
+								th Erase
+							- }
+					tbody
+						- if (exps && exps.length > 0) {
+							-each exp in exps
+								tr(id="#{exp.id}tr")
+									td= exp.name
+									td= exp.neuronType
+									td= exp.createdAt
+									td= exp.dateDevelopment
+									td= exp.tableList.length
+									td
+										a(href="/account/experiments/show/" + exp.id) Link To Experiment
+									td
+										- var color = "";
+										- var text = "";
+										- if (exp.visible) {
+										- 	color = "btn-warning";
+										- 	text = "Enable";
+										-	} else {
+										- 	color = "btn-success";
+										- 	text = "Disable";
+										- }
+										button(class="btn #{color} visibility", data-table="#{exp._id}")
+											| #{text}
+											//span(class="glyphicon glyphicon-eye-open")
+									td
+										button.btn.btn-danger.erase(data-table="#{exp._id}")
+											| X
+						- } else {
+								tr
+									td(colspan="8") No tienes experimentos.
+						- }
+	input(type="hidden", name='_csrf', id="_csrf" value='#{code}')

@@ -1,0 +1,60 @@
+extends ../../../../layouts/account
+
+block head
+  title Experiment Comparator
+
+block neck
+  link(rel='stylesheet', href='/views/account/index.min.css?#{cacheBreaker}')
+  link(rel="stylesheet", href='/views/account/experiments/compare.css')
+
+block body
+  - var haveElems = experiments.length > 0;
+  div.row
+    div.col-xs-12
+      div.page-header
+        h1 Experiment Library
+    div.col-xs-12
+      ul.breadcrumb
+        li.active
+          | Init (Stage 1)
+  div.row#stage1
+    div.col-xs-12
+      - if (haveElems)
+        form#demoform(action="/account/experiments/compare/stage/second", method="post")
+          ul#fcbklist
+            -each exp in experiments
+              li.col-md-6
+                hgroup
+                  h5.underlined
+                    strong #{exp.name} #{exp.author}
+                .borderp
+                  p.fcbkitem_text #{exp.dateDevelopment}
+                  p.numtabs Número de tablas: #{exp.tableList.length}
+                input(type="hidden", name="fcbklist_value[]", value="#{exp.id}", disabled='')
+          input(type="hidden", name="_csrf", value="#{code}")
+          button.btn.btn-default#send(type="submit", disabled="disabled") Submit
+      - else
+        p No hay experimentos para comparar.
+
+block feet
+  - if (haveElems)
+    script(src="/fcbklistSelection/fcbklistselection.js")
+    script.
+      $(document).ready(function() {
+        $.fcbkListSelection("#fcbklist", "400", "90", "2");
+
+        $("#send").on("click", function(e) {
+          //e.preventDefault();
+          //var cont = 0;
+
+          var cont = $(".liselected").length;
+
+          if(cont < 2) {
+            e.preventDefault();
+            alert("Debes seleccionar al menos dos experimentos para avanzar.");
+          }
+        });
+
+      });
+
+        

@@ -1,0 +1,133 @@
+extends ../../../layouts/account
+
+block head
+	title Experiment Library
+
+block neck
+	link(rel='stylesheet', href='/views/account/index.min.css?#{cacheBreaker}')
+	link(rel='stylesheet', href="/vendor/datatables/media/css/jquery.dataTables.css")
+
+	style.
+		thead tr th, tbody tr td {
+			text-align: center;
+		}
+		.warning a {
+			color: white;
+		}
+		td > a {
+			font-weight: bold;
+		}body { font-size: 140%; }
+
+block feet
+	script(src='/views/account/index.min.js?#{cacheBreaker}')
+	script(src="/vendor/datatables/media/js/jquery.dataTables.min.js?#{cacheBreaker}")
+	script.
+		$(document).ready(function() {
+			$('#tablexD').dataTable();
+		});
+		/*var $table = $('.table');
+		var $fixedColumn = $table.clone().insertBefore($table).addClass('fixed-column');
+
+		$fixedColumn.find('th:not(:first-child),td:not(:first-child)').remove();
+
+		$fixedColumn.find('tr').each(function (i, elem) {
+				$(this).height($table.find('tr:eq(' + i + ')').height());
+		});*/
+
+block body
+
+
+
+
+
+
+
+	style.
+		.table-responsive>.fixed-column {
+			position: fixed;
+			display: inline-block;
+			width: auto;
+			border-right: 1px solid #ddd;
+			background-color: white;
+		}
+		@media(min-width:768px) {
+			.table-responsive>.fixed-column {
+				display: none;
+			}
+		}
+
+
+
+	div.row
+		div.col-xs-12
+			div.page-header
+				h1 #{title}
+	div.row
+		div.col-xs-12
+			div.table-responsive
+				//table.table.table-striped.table-hover#table
+				//	thead
+				//		tr.active
+				//			th Name
+				//			th Author
+				//			th Experiment Type
+				//			th Date Upload
+				//			th Date Development
+				//			th Tabs
+				//			th Show
+				//	tbody
+				//		-if (exps.length > 0)
+				//			-each exp in exps
+				//				tr(class="#{exp.createdBy._id == id? 'warning' : ''}")
+				//					td= exp.name
+				//					td
+				//						a(href="/account/experiments/author/" + exp.createdBy._id) #{exp.createdBy.username}
+				//					td= exp.neuronType
+				//					td= exp.createdAt
+				//					td= exp.dateDevelopment
+				//					td= exp.tableList.length
+				//					td
+				//						a(href="/account/experiments/show/" + exp.id) Link To Experiment
+				//		- else
+				//			tr
+				//				td(colspan="7")
+				//					| No hay experimentos
+
+
+
+				table#tablexD.table.table-striped.table-bordered(cellspacing='0', width='100%')
+					thead
+						tr.active
+							th Name
+							th Author
+							th Experiment Type
+							th Date Upload
+							th Date Development
+							th Tabs
+							th Show
+					//tfoot
+					//	tr.active
+					//		th Name
+					//		th Author
+					//		th Experiment Type
+					//		th Date Upload
+					//		th Date Development
+					//		th Tabs
+					//		th Show
+					tbody
+						-if (exps.length > 0)
+							-each exp in exps
+								tr(class="#{exp.createdBy._id == id? 'warning' : ''}")
+									td= exp.name
+									td
+										a(href="/account/experiments/author/" + exp.createdBy._id) #{exp.createdBy.username}
+									td= exp.neuronType
+									td= exp.createdAt
+									td= exp.dateDevelopment
+									td= exp.tableList.length
+									td
+										a(href="/account/experiments/show/" + exp.id) Link To Experiment
+						- else
+							tr
+								td(colspan="7")
+									| No hay experimentos

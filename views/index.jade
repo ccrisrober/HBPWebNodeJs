@@ -1,0 +1,605 @@
+extends ../layouts/default
+
+block head
+  title Brain Repository · Index
+//http://kylestetz.github.io/CLNDR/
+
+block neck
+  link(rel='stylesheet', href='/views/index.min.css?#{cacheBreaker}')
+
+  style.
+    @import url(http://fonts.googleapis.com/css?family=Asap:400,700);
+
+    @import url(http://fonts.googleapis.com/css?family=Inconsolata:400,700);
+    #full-clndr {
+      background-color: #ebebeb;
+      font-weight: 700;
+      -moz-box-shadow: 4px 4px 0 #343434;
+      -webkit-box-shadow: 4px 4px 0 #343434;
+      box-shadow: 4px 4px 0 #343434;
+    }
+    #full-clndr .clndr-grid {
+      float: left;
+      width: 65%;
+      border-right: 2px solid white;
+    }
+    #full-clndr .clndr-grid .days-of-the-week {
+      width: 100%;
+      background-color: #3883a3;
+    }
+    #full-clndr .clndr-grid .days-of-the-week .header-day {
+      float: left;
+      width: 14.2857%;
+      padding: 14px;
+      text-align: center;
+      color: white;
+    }
+    #full-clndr .clndr-grid .days {
+      width: 100%;
+    }
+    #full-clndr .clndr-grid .days .day,
+    #full-clndr .clndr-grid .days .empty {
+      float: left;
+      width: 14.2857%;
+      height: 66px;
+      padding: 24px 0;
+      text-align: center;
+      color: #4f4f4f;
+      background-color: #ebebeb;
+      border-bottom: 2px solid white;
+      background-image: url('http://kylestetz.github.io/CLNDR/css/./triangle.svg');
+      background-size: cover;
+      background-position: center;
+    }
+    #full-clndr .clndr-grid .days .day.event .day-number,
+    #full-clndr .clndr-grid .days .empty.event .day-number {
+      padding-bottom: 4px;
+      border-bottom: 2px solid #3883a3;
+    }
+    #full-clndr .clndr-grid .days .day.adjacent-month .day-number,
+    #full-clndr .clndr-grid .days .empty.adjacent-month .day-number {
+      opacity: 0.3;
+    }
+    #full-clndr .clndr-grid .days .today {
+      background-color: white;
+      background-image: none;
+    }
+    #full-clndr .event-listing {
+      float: left;
+      width: 35%;
+    }
+    #full-clndr .event-listing .event-listing-title {
+      padding: 14px;
+      background-color: #71bbd2;
+      text-align: center;
+      color: white;
+      letter-spacing: 1px;
+    }
+    #full-clndr .event-listing .event-item {
+      padding: 14px;
+      color: #4f4f4f;
+    }
+    #full-clndr .event-listing .event-item-location {
+      font-weight: 400;
+    }
+    .noselect {
+      -webkit-user-select: none;
+      /* Chrome/Safari */
+
+      -moz-user-select: none;
+      /* Firefox */
+
+      -ms-user-select: none;
+      /* IE10+ */
+
+    }
+    #mini-clndr {
+      font-family: Asap, Helvetica, Arial;
+      margin: 0 auto;
+      width: 294px;
+      -moz-box-shadow: 4px 4px 0 #343434;
+      -webkit-box-shadow: 4px 4px 0 #343434;
+      box-shadow: 4px 4px 0 #343434;
+    }
+    #mini-clndr .clndr {
+      overflow: hidden;
+      border-bottom: 7px solid #69a776;
+    }
+    #mini-clndr .clndr .controls {
+      background-color: #69a776;
+      color: white;
+    }
+    #mini-clndr .clndr .controls .clndr-previous-button,
+    #mini-clndr .clndr .controls .clndr-next-button {
+      width: 15%;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      display: inline-block;
+      text-align: center;
+      cursor: pointer;
+      -webkit-user-select: none;
+      /* Chrome/Safari */
+
+      -moz-user-select: none;
+      /* Firefox */
+
+      -ms-user-select: none;
+      /* IE10+ */
+
+      -webkit-transition: background-color 0.5s;
+      -moz-transition: background-color 0.5s;
+      -ms-transition: background-color 0.5s;
+      -o-transition: background-color 0.5s;
+      transition: background-color 0.5s;
+    }
+    #mini-clndr .clndr .controls .clndr-previous-button:hover,
+    #mini-clndr .clndr .controls .clndr-next-button:hover {
+      background-color: #528b5e;
+    }
+    #mini-clndr .clndr .controls .month {
+      width: 70%;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      display: inline-block;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    #mini-clndr .clndr .days-container {
+      position: relative;
+      width: 294px;
+      height: 186px;
+      display: inline-block;
+    }
+    #mini-clndr .clndr .days-container .days {
+      position: absolute;
+      left: 0;
+      width: 294px;
+      height: 186px;
+      -webkit-transition: left 0.5s;
+      -moz-transition: left 0.5s;
+      -ms-transition: left 0.5s;
+      -o-transition: left 0.5s;
+      transition: left 0.5s;
+      background-color: #ebebeb;
+    }
+    #mini-clndr .clndr .days-container .days .day,
+    #mini-clndr .clndr .days-container .days .empty {
+      width: 42px;
+      display: inline-block;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      font-size: 12px;
+      text-align: center;
+      color: #212121;
+      border-right: 1px solid rgba(255, 255, 255, 0.5);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    #mini-clndr .clndr .days-container .days .day.event,
+    #mini-clndr .clndr .days-container .days .empty.event {
+      background-color: #d2d2d2;
+      -webkit-transition: background-color 0.5s;
+      -moz-transition: background-color 0.5s;
+      -ms-transition: background-color 0.5s;
+      -o-transition: background-color 0.5s;
+      transition: background-color 0.5s;
+      cursor: pointer;
+    }
+    #mini-clndr .clndr .days-container .days .day.event:hover,
+    #mini-clndr .clndr .days-container .days .empty.event:hover {
+      background-color: #b8b8b8;
+    }
+    #mini-clndr .clndr .days-container .days .day.adjacent-month,
+    #mini-clndr .clndr .days-container .days .empty.adjacent-month {
+      color: rgba(0, 0, 0, 0.3);
+    }
+    #mini-clndr .clndr .days-container .days .empty {
+      height: 31px;
+      vertical-align: bottom;
+    }
+    #mini-clndr .clndr .days-container .days .headers {
+      background-color: #97ce7f;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+    #mini-clndr .clndr .days-container .days .headers .day-header {
+      width: 42px;
+      display: inline-block;
+      text-align: center;
+      color: white;
+    }
+    #mini-clndr .clndr .days-container .events {
+      position: absolute;
+      left: 294px;
+      width: 294px;
+      height: 186px;
+      -webkit-transition: left 0.5s;
+      -moz-transition: left 0.5s;
+      -ms-transition: left 0.5s;
+      -o-transition: left 0.5s;
+      transition: left 0.5s;
+      background-color: #ebebeb;
+    }
+    #mini-clndr .clndr .days-container .events .headers {
+      position: relative;
+    }
+    #mini-clndr .clndr .days-container .events .event-header {
+      width: 100%;
+      background-color: #97ce7f;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      text-align: center;
+      color: white;
+    }
+    #mini-clndr .clndr .days-container .events .x-button {
+      position: absolute;
+      font-size: 80%;
+      top: 7px;
+      left: 20px;
+      cursor: pointer;
+      -webkit-transition: color 0.25s;
+      -moz-transition: color 0.25s;
+      -ms-transition: color 0.25s;
+      -o-transition: color 0.25s;
+      transition: color 0.25s;
+    }
+    #mini-clndr .clndr .days-container .events .x-button:hover {
+      color: white;
+    }
+    #mini-clndr .clndr .days-container .events .events-list {
+      overflow: scroll;
+      height: 155px;
+    }
+    #mini-clndr .clndr .days-container .events .events-list .event {
+      padding-top: 8px;
+      padding-bottom: 8px;
+      padding-left: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+      -webkit-transition: background-color 0.25s;
+      -moz-transition: background-color 0.25s;
+      -ms-transition: background-color 0.25s;
+      -o-transition: background-color 0.25s;
+      transition: background-color 0.25s;
+    }
+    #mini-clndr .clndr .days-container .events .events-list .event:hover {
+      background-color: #f5f5f5;
+    }
+    #mini-clndr .clndr .days-container .events .events-list .event a {
+      position: relative;
+      font-size: 12px;
+      letter-spacing: 1px;
+      background-color: transparent;
+      color: #212121;
+      text-decoration: none;
+      -webkit-transition: color 0.25s;
+      -moz-transition: color 0.25s;
+      -ms-transition: color 0.25s;
+      -o-transition: color 0.25s;
+      transition: color 0.25s;
+    }
+    #mini-clndr .clndr .days-container .events .events-list .event a:hover {
+      background-color: transparent;
+      color: #69a776;
+    }
+    #mini-clndr .clndr .days-container.show-events .days {
+      left: -294px;
+    }
+    #mini-clndr .clndr .days-container.show-events .events {
+      left: 0;
+    }
+    #clndr-3 {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #f4f4f4;
+      -moz-box-shadow: 4px 4px 0 #343434;
+      -webkit-box-shadow: 4px 4px 0 #343434;
+      box-shadow: 4px 4px 0 #343434;
+      padding-bottom: 12px;
+    }
+    #clndr-3 .month-bar {
+      text-align: center;
+      padding: 12px;
+    }
+    #clndr-3 .days-of-the-week {
+      width: 100%;
+    }
+    #clndr-3 .days-of-the-week .header-day {
+      display: inline-block;
+      float: left;
+      width: 14.2857%;
+      padding: 12px 0;
+      text-align: center;
+    }
+    #clndr-3 .days .day,
+    #clndr-3 .days .empty {
+      float: left;
+      width: 14.2857%;
+      padding: 12px 0;
+      text-align: center;
+    }
+    #clndr-3 .days .day.today,
+    #clndr-3 .days .empty.today {
+      background-color: #ebebeb;
+      -moz-box-shadow: inset 0 0 8px #d4d4d4;
+      -webkit-box-shadow: inset 0 0 8px #d4d4d4;
+      box-shadow: inset 0 0 8px #d4d4d4;
+    }
+    #clndr-3 .days .day.event,
+    #clndr-3 .days .empty.event {
+      color: #71bbd2;
+    }
+    #clndr-3 .days .day.adjacent-month .day-number,
+    #clndr-3 .days .empty.adjacent-month .day-number {
+      opacity: 0.3;
+    }
+    * {
+      margin: 0;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+    }
+    #mini-clndr {
+      font-family: Asap, Helvetica, Arial;
+      font-size: 18px;
+      color: #212121;
+    }
+    #mini-clndr body h1,
+    #mini-clndr body h2,
+    #mini-clndr body h3,
+    #mini-clndr body h4,
+    #mini-clndr body h5,
+    #mini-clndr body h6 {
+      margin-bottom: 1em;
+      color: white;
+      text-shadow: 1px 1px 1px #212121;
+    }
+    #mini-clndr p {
+      line-height: 1.5em;
+      margin-bottom: 1em;
+    }
+    #mini-clndr p + h3 {
+      margin-top: 3em;
+    }
+    #mini-clndr a {
+      text-decoration: none;
+      background-color: #ebebeb;
+      color: #3883a3;
+      padding: 0 2px;
+      border-radius: 2px;
+      -webkit-transition: background-color 0.2s, color 0.4s;
+      -moz-transition: background-color 0.2s, color 0.4s;
+      -ms-transition: background-color 0.2s, color 0.4s;
+      -o-transition: background-color 0.2s, color 0.4s;
+      transition: background-color 0.2s, color 0.4s;
+    }
+    #mini-clndr a:hover {
+      background-color: #98cede;
+      color: #212121;
+    }
+    #mini-clndr span.code {
+      padding: 0 2px;
+      background-color: rgba(255, 255, 255, 0.4);
+      border-radius: 2px;
+    }
+    #mini-clndr .block {
+      padding: 80px 0;
+      width: 100%;
+    }
+    #mini-clndr .inner {
+      max-width: 960px;
+      padding: 0 20px;
+      margin: 0 auto;
+    }
+    #mini-clndr .clearfix:after {
+      content: ".";
+      display: block;
+      clear: both;
+      visibility: hidden;
+      line-height: 0;
+      height: 0;
+    }
+    #mini-clndr .clearfix {
+      display: inline-block;
+    }
+    #mini-clndr html[xmlns] .clearfix {
+      display: block;
+    }
+    #mini-clndr * html .clearfix {
+      height: 1%;
+    }
+    #mini-clndr strong {
+      font-weight: 700;
+    }
+    #mini-clndr .bg-gray {
+      background-color: #414141;
+    }
+    #mini-clndr .bg-red {
+      background-color: #ff5a45;
+    }
+    #mini-clndr .bg-red a {
+      color: #ff5a45;
+    }
+    #mini-clndr .bg-red a:hover {
+      background-color: #ffb4ab;
+      color: #212121;
+    }
+    #mini-clndr .bg-blue {
+      background-color: #71bbd2;
+    }
+    #mini-clndr .bg-green {
+      background-color: #97ce7f;
+    }
+    #mini-clndr .bg-yellow {
+      background-color: #ddca9a;
+    }
+    #mini-clndr .header {
+      padding: 30px 0;
+    }
+    #mini-clndr .clndr-logo {
+      margin: 0 auto;
+      width: 113px;
+      height: 113px;
+      background-image: url('http://kylestetz.github.io/CLNDR/css/./clndr-logo.svg');
+    }
+    #mini-clndr .banner-text {
+      text-align: center;
+      color: #f4f4f4;
+      letter-spacing: 1px;
+      font-weight: normal;
+      text-shadow: 2px 2px 2px #212121;
+    }
+    #mini-clndr .banner-text.below {
+      margin-top: 30px;
+    }
+    #mini-clndr .banner-text.below a {
+      background-color: transparent;
+      color: #97ce7f;
+    }
+    #mini-clndr .banner-text.below a:hover {
+      color: #d3eac9;
+    }
+    #mini-clndr .more-space {
+      margin-top: 3em;
+    }
+    @media all and (max-width: 768px) {
+      #full-clndr .clndr-grid {
+        width: 100%;
+        border: none;
+      }
+      #full-clndr .event-listing {
+        display: none;
+      }
+      #mini-clndr h1.banner-text {
+        font-size: 28px;
+      }
+      #mini-clndr .banner-text.below {
+        font-size: 16px;
+        word-wrap: break-word;
+      }
+      #mini-clndr code[class*="language-"],
+      #mini-clndr pre[class*="language-"] {
+        font-size: 14px;
+      }
+    }
+
+
+
+block feet
+  script(src='/vendor/clndr/clndr.min.js')
+  script.
+    var clndr = {};
+
+    $( function() {
+
+      // PARDON ME while I do a little magic to keep these events relevant for the rest of time...
+      var currentMonth = moment().format('YYYY-MM');
+      var nextMonth    = moment().add('month', 1).format('YYYY-MM');
+
+      var events = [
+        { date: currentMonth + '-' + '10', title: 'Persian Kitten Auction', location: 'Center for Beautiful Cats' },
+        { date: currentMonth + '-' + '19', title: 'Cat Frisbee', location: 'Jefferson Park' },
+        { date: currentMonth + '-' + '19', title: 'AAAAH'},
+        { date: currentMonth + '-' + '23', title: 'Kitten Demonstration', location: 'Center for Beautiful Cats' },
+        { date: nextMonth + '-' + '07',    title: 'Small Cat Photo Session', location: 'Center for Cat Photography' },
+        { date: "2014-12-05", title: "ola k ase?" },
+        { date: "2014-12-15", title: "ola k ase, ves calentarios? :D", url: "http://www.google.es" }
+      ];
+
+      console.log(currentMonth);
+      console.log(nextMonth);
+      console.debug(events);
+
+      $('#mini-clndr').clndr({
+        template: $('#mini-clndr-template').html(),
+        events: events,
+        clickEvents: {
+          click: function(target) {
+            if(target.events.length) {
+              var daysContainer = $('#mini-clndr').find('.days-container');
+              daysContainer.toggleClass('show-events', true);
+              $('#mini-clndr').find('.x-button').click( function() {
+                daysContainer.toggleClass('show-events', false);
+              });
+            }
+          }
+        },
+        adjacentDaysChangeMonth: true
+      });
+
+    });
+
+block body
+  div.jumbotron
+    h1 Brain Repository
+    p.lead
+      | Your Node.js website and user system is running. May the force be with you.
+      //div
+      //  a.btn.btn-primary.btn-lg(href='/signup/') Create an Account
+      //  |  or&nbsp;
+      //  a.btn.btn-warning.btn-lg(href='/login/forgot/') Reset Your Password
+      //div.clearfix
+
+
+  mixin setText(isLogin)
+    -if (isLogin === true)
+      p
+        | First, you must download the desktop application for the total managing of the experiments.
+        p
+          | Esta aplicación únicamente tienen la utilidad de servir de repositorio para todos los experimentos que suban
+          | los usuarios, los cuales podrás visualizar e incluso tener a tu disposición para exportación en diferentes formatos
+          | (incluso es posible exportar a tu aplicación de escritorio). No obstante, algunos experimentos pueden estar privados,
+          | y solo pueden ser accesibles por determinados usuarios.
+        p
+          | Please, download the current version to his Operating System and his architecture (
+          b 32 bits
+          | or
+          b 64 bits
+          | ), for power selects
+          | the dependences adapted for his total functioning in your computer. You can download the application in the following
+          b
+            a(href='/software') url
+          | .
+
+
+  div.row
+    - if (isLogin === false)
+      include index_nologin
+    -else
+      .col-md-7
+        .panel.panel-default
+            .panel-heading
+              h3.panel-title
+                i.fa.fa-home
+                | &nbsp;
+                - if (isLogin === true)
+                  | Bienvenidos
+            .panel-body
+              mixin setText(isLogin)
+      .col-md-5
+        .inner
+          #mini-clndr
+            script#mini-clndr-template(type='text/template')
+              .controls
+                .clndr-previous-button &lsaquo;
+                .month <%= month %>
+                .clndr-next-button &rsaquo;
+              .days-container
+                .days
+                  .headers
+                    <% _.each(daysOfTheWeek, function(day) { %>
+                    div.day-header <%= day %>
+                    <% }); %>
+                  <% _.each(days, function(day) { %>
+                  div(class!="<%= day.classes %>" id!="<%= day.id %>")
+                    <%= day.day %>
+                  <% }); %>
+                .events
+                  .headers
+                    .x-button x
+                    .event-header EVENTS
+                  .events-list
+                    <% _.each(eventsThisMonth, function(event) { %>
+                    .event
+                      a(href!="<%= event.url %>") <%= moment(event.date).format('MMMM Do') %>: <%= event.title %>
+                    <% }); %>

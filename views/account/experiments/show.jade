@@ -1,0 +1,166 @@
+extends ../../../layouts/account
+
+block head
+	title Experiment Library
+	style.
+		.detail-view th {
+				text-align: right;
+				width: 160px;
+		}
+		.tab-pane thead tr th, .tab-pane tbody tr td {
+			text-align: center;
+		}
+		#tabs thead tr th:first-child, #tabs tbody td:first-child {
+			border-right: 2px solid white;
+		}
+		#info th {
+			width: 40%;
+		}
+
+block neck
+	link(rel='stylesheet', href='/views/account/index.min.css?#{cacheBreaker}')
+	style.
+		.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+			color: #00bc8c;
+			background-color: #222;
+			border: 1px solid #464545;
+			border-bottom-color: transparent;
+			cursor: default;
+		}
+		h4 {
+			float: right;
+		}
+
+
+block feet
+	script(src='/views/account/index.min.js?#{cacheBreaker}')
+	script(src='/vendor/highcharts/highcharts.js')
+	script(src='/vendor/highcharts/highcharts-more.js')
+	script(src='/vendor/highcharts/modules/data.js')
+	script(src='/vendor/highcharts/modules/exporting.js')
+
+	//script(src="/vendor/highcharts/themes/dark-unica.js")
+	script(src='/views/account/experiments/show.min.js?#{cacheBreaker}')
+
+	- if (me) {
+		script(src="/views/account/experiments/showevents.min.js?#{cacheBreaker}")
+	- }
+
+block body
+	div.row
+		div.col-xs-12
+			div.page-header
+				h1 Experiment Show
+
+	-var tabs = experiment.tableList.length
+
+	mixin contentTabHeader
+		a(href='#panel-#{i}', data-toggle='tab', data-table="table-#{i}") Tab Nº #{(i+1)}
+
+
+	mixin contentTabBody(tableExp, id)
+		div.row
+			div.col-xs-12
+				div.table-responsive
+					table.table.table-striped(id="table-#{id}")
+						thead
+							tr.active
+								th Area
+								-each header in tableExp.headers
+									th= header
+						tbody
+							-each info in tableExp.matrix
+								tr
+									td= info.area
+									-each data in info.data
+										td
+											- if (!isNaN(data))
+												| #{data}
+											- else
+												| 0
+
+	.container
+		.row.clearfix
+			div.col-xs-12
+				h3 Info
+				div.table-responsive
+					#visibilityblock
+						-if (!experiment.visible) {
+							.alert.alert-warning.alert-dismissible.fade.in(role='alert')
+								strong Atención!
+								| &nbsp;El experimento no se puede visualizar.
+						- }
+					table.detail-view.table.table-striped.table-condensed#info
+						tr.odd
+							th Name
+							td= experiment.name
+						tr.even
+							th User
+							td
+								a(href="/account/experiments/author/#{experiment.createdBy._id}") #{experiment.createdBy.username}
+						tr.odd
+							th Date Development
+							td= experiment.dateDevelopment.toUTCString()
+						tr.even
+							th Date Upload
+							td= experiment.createdAt.toUTCString()
+						tr.odd
+							th Description
+							td= (experiment.description || "------------------------------------------")
+						tr.even
+							th Experiment Type
+							td
+								div(style="text-align: left;width: 50%;float:left") #{experiment.neuronType}
+								div(style="width: 62px;float: right;text-align:right;margin-right: 5px;")
+									a(href="/account/experiments/show/#{experiment.id}/download") Download
+					- if (me) {
+						div.panel.panel-default
+							div.panel-heading
+								a.panel-title.collapsed(style="display: block", data-toggle="collapse", data-parent="#panel-430146", href="#panel-element-54409") Administración
+							div#panel-element-54409.panel-collapse.collapse
+								div.panel-body
+									table.detail-view.table.table-striped.table-condensed#info
+										tr.odd
+											th Show
+											td
+												button#visiblity.btn.btn-sm.btn-block.btn-warning #{(experiment.visible ? "Disable": "Enable")}
+										tr.eben
+											th Delete
+											td
+												button#delete.btn.btn-sm.btn-block.btn-danger
+													//span(class="glyphicon glyphicon-remove")
+													| Delete
+					- }
+
+		.row.clearfix
+			.col-md-12.column
+				#tabs-tableExperiment.tabbable
+				ul.nav.nav-tabs
+					-var first = true
+					-for(var i = 0; i < tabs; ++i) {
+						if first == true
+							-first = false
+							li.active
+								mixin contentTabHeader
+						else
+							li
+								mixin contentTabHeader
+					-}
+				.tab-content
+					-var first = true
+					-var i = -1
+					-each tableExp in experiment.tableList
+						- i = i + 1
+						if (first == true)
+							-first = false
+							div(class="tab-pane active", id="panel-#{i}")
+								mixin contentTabBody(tableExp, i)
+						else
+							div(class="tab-pane", id="panel-#{i}")
+								mixin contentTabBody(tableExp, i)
+
+
+		.row-clearfix
+			div(id="container" style="min-width: 310px; height: 600px; margin: 0 auto")
+		input(type="hidden", name='_csrf', id="_csrf" value='#{code}')
+		input(type="hidden", name="experiment", id="experiment",value="#{experiment._id}")

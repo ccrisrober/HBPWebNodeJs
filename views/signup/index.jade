@@ -1,0 +1,55 @@
+extends ../../layouts/default
+
+block head
+  title Sign Up
+
+block neck
+  link(rel='stylesheet', href='/views/signup/index.min.css?#{cacheBreaker}')
+
+block feet
+  script(src='/views/signup/index.min.js?#{cacheBreaker}')
+  script.
+    /*$("#idForm").submit(function() {
+      //var pass1 =
+      alert("enviando");
+      return false;
+    });*/
+
+block body
+  div.row
+    div.col-sm-6
+      div.page-header
+        h1 Sign Up
+      div#signup
+
+    div.col-sm-6.marketing
+      div.page-header
+      p.lead Road to Atlas!
+      i.fa.fa-road.super-awesome
+
+  script(type='text/template', id='tmpl-signup')
+    form#idForm
+      div.alerts
+        |<% _.each(errors, function(err) { %>
+        div.alert.alert-danger.alert-dismissable
+          button.close(type='button', data-dismiss='alert') &times;
+          |<%- err %>
+        |<% }); %>
+      div.form-group(class!='<%- errfor.username ? "has-error" : "" %>')
+        label Pick a Username:
+        input.form-control(type='text', name='username', value!='<%= username %>')
+        span.help-block <%- errfor.username %>
+      div.form-group(class!='<%- errfor.email ? "has-error" : "" %>')
+        label Enter Your Email:
+        input.form-control(type='text', name='email', value!='<%= email %>')
+        span.help-block <%- errfor.email %>
+      div.form-group(class!='<%- errfor.password ? "has-error" : "" %>')
+        label Create a Password:
+        input.form-control(type='password', name='password', value!='<%= password %>')
+        span.help-block <%- errfor.password %>
+      div.form-group(class!='<%- errfor.password2 ? "has-error" : "" %>')
+        label Repeat Password:
+        input.form-control(type='password', name='password2', value!='<%= password2 %>')
+        span.help-block <%- errfor.password2 %>
+      div.form-group
+        button.btn.btn-primary.btn-signup(type='button') Create My Account

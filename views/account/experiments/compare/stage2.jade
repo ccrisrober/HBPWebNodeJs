@@ -1,0 +1,54 @@
+extends ../../../../layouts/account
+
+block head
+	title Experiment Comparator
+
+block neck
+	link(rel='stylesheet', href='/views/account/index.min.css?#{cacheBreaker}')
+	link(rel="stylesheet", href='/views/account/experiments/compare.css')
+
+block body
+	div.row
+		div.col-xs-12
+			div.page-header
+				h1 Experiment Library
+		div.col-xs-12
+				ul.breadcrumb
+					li
+						a(href="/account/experiments/compare") Init (Stage 1)
+					li.active
+						| Stage 2
+						span.divider /
+	div.row#stage2
+		form#experiments(method='post', action='/account/experiments/compare/stage/finish')
+			section#experimentsID
+				-each exp in experiments
+					- if (exp.tableList.length > 0)
+						article.col-md-6.article
+							.row.clearfix.experiment
+								.col-md-12.headerExp
+									hgroup
+										h2(onclick='window.open("/account/experiments/show/#{exp.id}", "popup", "width=300", "height=100")') #{exp.name}
+								.col-md-12.contentDataExp
+									.row.row-md-height
+										.col-md-8.col-md-height
+											p.date
+												strong Fecha: 
+												| #{exp.dateDevelopment.toUTCString()}
+											p.author
+												strong Author: 
+												| #{exp.createdBy.username}
+											p.neuron
+												strong Tipo: 
+												| GENOMICAL
+												input(type="hidden", value="#{exp.id}", name="exps[]")
+										#clearfix
+										.col-md-4.col-md-height.col-middle
+											select.form-control(name="tab[]")
+												- var i = 0;
+												-each idTab in exp.tableList
+													option(value='#{idTab}')
+														|  Table #{++i}
+				.col-md-12.send
+					input(type="hidden", name="_csrf", value="#{code}")
+					button.btn.btn-primary.btn-lg Send

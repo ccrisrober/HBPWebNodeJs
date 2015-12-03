@@ -1,0 +1,194 @@
+extends ../../../../layouts/account
+
+block head
+	title Experiment Comparator
+
+block neck
+	link(rel='stylesheet', href='/views/account/index.min.css?#{cacheBreaker}')
+	link(rel="stylesheet", href='/views/account/experiments/compare.css')
+
+block body
+	div.row
+		div.col-xs-12
+			div.page-header
+				h1 Experiment Library
+		div.col-xs-12
+				ul.breadcrumb
+					li
+						a(href="/account/experiments/compare") Init (Stage 1)
+					li
+						a(href="javascript:window.history.back()") Stage 2
+					li.active
+						| Stage 3 (Finish)
+
+	-var first = true;
+	mixin contentTabHeader(i)
+		li(class="#{first? 'active': ''}")
+			a(href='#panel-#{i}', data-toggle='tab', data-table="table-#{i}") #{i}
+		- first = false;
+
+	div.row#stage3
+		div.col-xs-12
+			div.tabbable#tabInfo
+				ul.nav.nav-tabs
+					- var iii = 0;
+					- each exp in data.exps
+						mixin contentTabHeader(exp.username + iii)
+						- iii++;
+				- var iii = 0;
+				div.tab-content
+					-each exp in data.exps
+						div(class="tab-pane #{iii == 0? 'active' : ''}", id="panel-#{exp.username}#{iii}")
+							hgroup
+									h2(onclick='window.open("/account/experiments/show/#{exp._id}", "popup", "width=500, height=600")') #{exp.name}
+							dl.dl-horizontal
+								dt
+										| Username
+									dd
+										a(target="_link", href="/account/experiments/author/#{exp.createdBy}") #{exp.username}
+									dt
+										| Experiment Type
+									dd
+										| #{exp.neuronType}
+									dt
+										| Date Development
+									dd
+										| #{exp.dateDevelopment}
+									dt
+										| Description
+									dd
+										| #{exp.description? exp.description : "------------------------------------------------------------------------------------"}
+
+
+							- iii++;
+		- first = true;		// Reset var
+
+		div.col-xs-12
+			- var maxTabs = 0;
+			div.tabbable#tabData
+				ul.nav.nav-tabs
+					- each value, key in data.headers
+						mixin contentTabHeader(key)
+
+				div.tab-content
+					- first = true
+					- each value, key in data.headers
+						div(class="tab-pane #{first? 'active' : ''}", id="panel-#{key}")
+							- first = false
+							hgroup
+								h1 #{key}
+							- if (value == ""){
+								p There is no associated information.
+							-} else {
+								table(id="table-#{id}").detail-view.table.table-striped.table-condensed
+									thead
+										tr.active
+											th Area
+											- each v, k in data.exps
+												th #{v.name} ( #{v.neuronType} )
+												- maxTabs++;
+									tbody
+									- var area = 1;
+									-each expTab in value
+										tr
+											th #{area++}
+											-each data_ in expTab
+												td
+													- if (!isNaN(data_))
+														| #{data_}
+													- else
+														| 0
+											- var tdMissing = maxTabs - expTab.length
+											- for(var ii = 0; ii < tdMissing; ii++) {
+												td 0
+											- }
+							- }
+							br
+							div(id="container-#{id++}")
+							a(href="#", class="scrollToTop") Scroll To Top
+
+- var datas = "123";
+block feet
+	script(src='/views/account/index.min.js?#{cacheBreaker}')
+	script(src='/vendor/highcharts/highcharts.js')
+	script(src='/vendor/highcharts/highcharts-more.js')
+	script(src='/vendor/highcharts/modules/data.js')
+	script(src='/vendor/highcharts/modules/exporting.js')
+
+	script(src="/vendor/highcharts/themes/dark-unica.js")
+
+	script.
+		//alert("No va bien si existe un var en una tabla y en otra no.");
+		//alert("Se ha arregado que si no existe, añade td vacíos a 0, pero solo va bien si quien no la tiene es la primera.");
+		//alert("Si no es la primera, funciona mal D:");
+		/*$('.nav-tabs a').click(function (e) {
+			//alert($(this).data("table"));
+			updateContainer($(this).data("table"));
+		});*/
+		function updateContainer(table, id) {
+			$("#container-" + id).highcharts({
+				data: {
+					table: document.getElementById(table)
+				},
+				chart: {
+					polar: true,
+					type: 'line'
+				},
+				title: {
+					text: "Data extracted from a HTML table in a page"
+				},
+				pane: {
+					size: '80%'
+				}
+				,xAxis: {
+					categories: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47],
+					tickmarkPlacement: 'on',
+					lineWidth: 0
+				},
+				yAxis: {
+					gridLineInterpolation: 'polygon',
+					allowDecimals: false,
+					title: {
+						text: "Units"
+					}
+				},
+				tooltip: {
+					shared: true,
+					pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y}</b><br/>'
+				},
+
+				legend: {
+					align: 'right',
+					verticalAlign: 'top',
+					y: 70,
+					layout: 'vertical'
+				}
+			})
+		};
+
+		//updateContainer("table-0");
+
+		$(document).ready(function() {
+			var id = !{id};
+			for(var i = 0; i < id; i++) {
+				updateContainer("table-" + i, i);
+			}
+			var tabData = $( "#tabData" );
+			var h = tabData.position().top + 500;
+			//Check to see if the window is top if not then display button
+			$(window).scroll(function(){
+				if ($(this).scrollTop() > h) {
+					$('.scrollToTop').fadeIn();
+				} else {
+					$('.scrollToTop').fadeOut();
+				}
+			});
+
+			//Click event to scroll to top
+			$('.scrollToTop').click(function(){
+				$('html, body').animate({
+					scrollTop: $("#tabData").offset().top
+				}, 1000);
+				return false;
+			});
+		});

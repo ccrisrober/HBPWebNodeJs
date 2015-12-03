@@ -1,0 +1,190 @@
+extends ../../layouts/default
+
+block head
+	title Manage Accounts
+
+block neck
+	link(rel='stylesheet', href='/views/admin/accounts/index.min.css?#{cacheBreaker}')
+	style.
+		body {
+			font-family: sans-serif;
+			margin: 0;
+		}
+		.prev, .next {
+			font-size: 60%;
+		}
+		h1 {
+			text-align: center;
+			margin: 0;
+		}
+		table {
+			border-collapse: collapse;
+		}
+		td {
+			border: 1px solid #ccc;
+		}
+		table.month {
+			table-layout: fixed;
+			width: 1000px;
+			height: 600px;
+			margin: auto;
+		}
+		table.month td {
+			position: relative;
+			vertical-align: top;
+		}
+		table.month td .date {
+			font-weight: bold;
+			position: absolute;
+			font-size: 100px;
+			bottom: -23px;
+			right: -4px;
+			color: #ececec;
+			z-index: -1;
+		}
+		table.month td:hover {
+			cursor: pointer;
+		}
+		table.month td:hover .date {
+			color: #ccc;
+		}
+		td ul {
+			list-style-type: none;
+			padding: 0;
+			margin: 0;
+			font-size: 80%;
+			height: 100%;
+			overflow: scroll;
+		}
+		td li {
+			padding: 3px 10px;
+			margin: 2px 0;
+			background: rgba(223, 240, 216, 0.5);
+			border: 1px solid rgb(223, 240, 216);
+		}
+		.splitView > * {
+			width: 45%;
+			margin: 2%;
+			float: left;
+		}
+		table.day tr.highlight td.event {
+			background: rgb(217, 237, 247);
+			color: rgb(53, 103, 132);
+		}
+		table.day tr.highlight.hover td.event {
+			background: rgb(252, 248, 227);
+			color: rgb(53, 103, 132);
+		}
+		table.day td {
+			padding: 4px 0;
+			width: 100px;
+			text-align: center;
+		}
+		table.day td.event {
+			width: 500px;
+		}
+
+		div.mousescroll {
+			overflow: hidden;
+		}
+		div.mousescroll:hover {
+			overflow-y: scroll;
+		}
+		.slimScrollDiv { border: 1px solid #ccc; margin:10px; }
+
+
+		/*http://jsfiddle.net/PVZB8/139/*/
+		/*div.mousescroll {
+			overflow: hidden;
+		}
+		div.mousescroll:hover {
+			overflow-y: scroll;
+		}
+		.slimScrollDiv { border: 1px solid #ccc; margin:10px; }*/
+
+
+block feet
+	script(src='/views/calendar/index.js?#{cacheBreaker}')
+	script(src="/vendor/slimScroll/jquery.slimscroll.min.js")
+	script.
+		$('.scrollMaster').slimscroll({
+			color: '#00f',
+			size: '10px',
+			width: '50px',
+			height: '150px'                  
+		});
+
+block body
+	script(type='text/template', id="tmpl-month").
+		<h1>
+			<span class="prev"> &larr; Previous Month </span>
+				<%= name %> <%= year %>
+			<span class="next"> Next Month &rarr; </span>
+			</h1>
+		<table class='month'>
+			<thead>
+				<tr>
+					<th>Sunday</th>
+					<th>Monday</th>
+					<th>Tuesday</th>
+					<th>Wednesday</th>
+					<th>Thursday</th>
+					<th>Friday</th>
+					<th>Saturday</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+
+
+	script(type="text/template", id="tmpl-day").
+		<span class="date"><%= num %></span>
+		<ul class="mousescroll scrollMaster">
+			
+			<% titles.forEach(function(title) { %>
+			<li><%= title %></li>
+			<% }) %>
+			
+		</ul>
+
+	script(type="text/template", id="tmpl-viewday").
+		<h1><%= date %></h1>
+		<p class="back">&larr; Back to Month View </p>
+		<div class="splitView"></div>
+
+	script(type="text/template", id="tmpl-dayTable").
+		<thead>
+			<tr>
+				<th>Time</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+
+	script(type="text/template", id="tmpl-hour").
+		<td class="time"><%= time %></td>
+		<td class="event"></td>
+
+	script(type="text/template", id="tmpl-details").
+		<h2><%= title %></h>
+		<% if (start) { %>
+			<p> <%= start %> - <%= end %> (<%= duration %>) <p>
+			<p><button> Delete Event </button>
+		<% } %>
+	
+	script(type="text/template", id="tmpl-createEvent").
+		<p><input type="text" id="eventTitle" /></p>
+		<p><input type="time" id="eventStartTime" /></p>
+		<p><input type="time" id="eventEndTime" /></p>
+		<p><button> Create Event </button></p>
+		<p class="error"></p>
+
+
+	div.row
+		div.col-md-12
+			div.page-header
+				| Header
+	div.row
+		div.col-md-12
+			div#main

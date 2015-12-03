@@ -1,0 +1,39 @@
+extends ../../../layouts/default
+
+block head
+	title Manage Accounts
+
+block neck
+	link(rel='stylesheet', href='/views/admin/accounts/index.min.css?#{cacheBreaker}')
+
+
+block feet
+	script.
+		var USER = {}; //!{user};
+		var username = "Cristian";
+		var id = 5;
+		USER.username = username;
+		USer.id = id;
+		
+	script(src='/views/account/contacts/index.js?#{cacheBreaker}')
+
+block body
+
+	script(type="text/template", id="tmpl-navView").
+		<ul>
+			<li><a href="/">Home</a></li>
+			<li><a href="/users">All Users</a></li>
+			<li><a href="/users/<%- id %>">My Profile</a></li>
+			<li><a href="/upload">Add Photo</a></li>
+			<li>Logged in as <strong><%- username %></strong></li>
+			<li><a href="/logout">Log out</a></li>
+		</ul>
+		<hr />
+
+	script(type="text/template", id="tmpl-experimentView").
+		<a href="/experiment/<%- id %>"><%- name %></a>
+	br
+	br
+	br 
+	hr
+	div#main

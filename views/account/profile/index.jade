@@ -1,0 +1,135 @@
+extends ../../../layouts/account
+
+block head
+	title #{user.username} Profile
+
+block neck
+	link(rel='stylesheet', href='/views/account/index.min.css?#{cacheBreaker}')
+	
+	style.
+		#friends {
+			text-align: center;
+		}
+		img, table {
+			width: 100%;
+		}
+		.img-profile {
+			max-height: 300px;
+			padding-bottom: 1.5em;
+		}
+		.allcontacts {
+			text-align: right;
+		}
+		.commentdelete {
+			text-align: right;
+		}
+		.commentdelete a {
+			padding-left: 1.2em;
+		}
+		.list-group-item-heading {
+			text-decoration: underline;
+		}
+		#exp-container {
+			width: 100%;
+			height: 445px;
+			/*max-height: 445px;*/
+			overflow:hidden; overflow-y:scroll;
+		}
+
+		#friends {
+			width: 100%;
+			height: 300px;
+			overflow:hidden; overflow-y:scroll;
+		}
+
+block feet
+	script(src='/views/account/index.min.js?#{cacheBreaker}')
+	
+
+block body
+	.row
+		.col-xs-12
+			.page-header
+				h1 
+					i #{data.user.username}
+					|  Profile
+	section.row
+		article.col-sm-6
+			img.img-profile.img-rounded(src="https://fbcdn-sphotos-d-a.akamaihd.net/hphotos-ak-xap1/v/t1.0-9/10362580_10204997960047605_8726013217247719726_n.jpg?oh=53385bb54d5158cde3841530a69e049c&oe=54F77AFD&__gda__=1425463464_35f8701c93a9944b1446e91452b609f3", alt="#{user.username} profile image")
+
+			p.allcontacts
+				a(href="/account/contact/") All contacts
+
+			#friends.content-area
+				.row.clearfix
+					- for(var i = 0; i < 15; i++)
+						.col-xs-4
+							img.media-object(src='http://lorempixel.com/64/64/', alt='')
+							a(href="#") Cristian Rodríguez Bernal
+					
+		article.col-sm-6
+
+			.table-responsive
+				table.details-view.table-striped.table-condensed
+					tr.odd
+						th First Name:
+						td #{data.account.name.first}
+					tr.even
+						th Last Name:
+						td #{data.account.name.middle} #{data.account.name.last}
+					tr.odd
+						th Company Name:
+						td Work in company 
+							i 
+								strong #{data.account.company}
+					tr.even
+						th Email:
+						td #{data.user.email}
+			h3 Asociated experiments
+			#exp-container.content-area
+				.list-group
+					- each exp in experiments
+						a.list-group-item(href='/account/experiments/show/#{exp.id}')
+							h4.list-group-item-heading= exp.name
+							p(class="list-group-item-text")!= exp.description
+
+
+	section.row
+		.col-xs-12.column
+			.page-header
+				h2 Comments
+			#comments
+				.media.well
+					a.pull-left(href='#')
+						img.media-object(src='http://lorempixel.com/64/64/', alt='')
+					.media-body
+						h4.media-heading
+							| Nested media heading
+						p Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
+						div.commentdelete
+							a(href="#")
+								span.label.label-primary.comment(data-id="1") Comentar
+							a(href="#")
+								span.label.label-danger.delete(data-id="1") Borrar
+						.media
+							a.pull-left(href='#')
+								img.media-object(src='http://lorempixel.com/64/64/', alt='')
+							.media-body
+								h4.media-heading
+									| Nested media heading
+								p Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
+								div.commentdelete
+									a(href="#")
+										span.label.label-danger.delete(data-id="2") Borrar
+					.media
+						a.pull-left(href='#')
+							img.media-object(src='http://lorempixel.com/64/64/', alt='')
+						.media-body
+							h4.media-heading
+								| Nested media heading
+							p Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
+							div.commentdelete
+								a(href="#")
+									span.label.label-primary.comment(data-id="3") Comentar
+								a(href="#")
+									span.label.label-danger.delete(data-id="3") Borrar

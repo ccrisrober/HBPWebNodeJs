@@ -1,0 +1,71 @@
+extends ../../../layouts/account
+
+block head
+	title Experiment Library
+
+block neck
+	link(rel='stylesheet', href='/views/account/index.min.css?#{cacheBreaker}')
+
+block feet
+	script(src='/views/account/index.min.js?#{cacheBreaker}')
+	script.
+		/*$("#searchform").submit(function() {
+			//alert($("#name").val());
+			//alert($("#author").val());
+			//alert($("#neurons").val());
+
+			alert($('form#searchform').serialize());
+
+			$.ajax({
+				url: '/account/experiments/search/',
+				type: 'post',
+				//dataType: 'json',
+				data: $('form#searchform').serialize(),
+				success: function(data) {
+					//alert(data);
+					$("#searchform").hide();
+					$("#error").html(data);
+				},
+				error: function(e){
+					alert("An AJAX error occured. " + JSON.stringify(e));
+				}
+			});
+
+
+			return false;
+		});*/
+
+block body
+	div.row
+		div.col-xs-12
+			div.page-header
+				h1 Experiment Library
+
+	.row.clearfix
+		.col-md-12.column
+
+			#error
+
+			form.form-horizontal#searchform(role='form', action="/account/experiments/search/filter")
+				.form-group
+					label.col-sm-4.control-label(for='name') Name
+					.col-sm-8
+						input.form-control(type='text', name="name", id="name")
+				.form-group
+					label.col-sm-4.control-label(for='author') Author
+					.col-sm-8
+						input.form-control(type='text', name="author", id="author")
+				.form-group
+					label.col-sm-4.control-label(for='neuron') Neuronas
+						br
+						| (Selección Múltiple)
+					.col-sm-8
+						select.form-control(multiple="multiple", name="neurons", id="neurons")
+							option(value="MORPHOLOGICAL") MORPHOLOGICAL
+							option(value="GENOMICAL") GENOMICAL
+							option(value="PHYSIOLOGICAL") PHYSIOLOGICAL
+				.form-group
+					.col-sm-offset-4.col-sm-8
+						button.btn.btn-primary.bnt-large(type='submit') Search
+
+	

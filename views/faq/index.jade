@@ -1,0 +1,105 @@
+extends ../../layouts/default
+
+block head
+	title Experiment Library
+	- var description = "Lista de preguntas y respuestas"
+
+block neck
+	link(rel='stylesheet', href='/views/account/index.min.css?#{cacheBreaker}')
+	style.
+		textarea {
+			resize: vertical;
+		}
+
+block feet
+	script(src='/views/account/index.min.js?#{cacheBreaker}')
+
+	-if (isLogued === true)
+		script.
+			$("#save").click(function() {
+				var form = $("#newFaq");
+				$.ajax({
+					url: "/faq/create", 		//form.attr("action"),
+					data: form.serialize(),
+					type: "post",				//form.attr("method"),
+					beforeSend: function() {
+						$(".ajax-spinner").css("z-index", "1060");
+					},
+					success: function (data) {
+						$(".ajax-spinner").css("z-index", "999");
+						console.log('Success: ' + data);
+						$(".modal-header").find("#titleModal").html("Send with success");
+						//$(".modal-body").append(JSON.stringify(data)); //var ret = jQuery.parseJSON(data);
+
+						
+						console.log(data);
+						//data = JSON.stringify(data);
+						console.log(data);
+						if(data.error) {
+							$(".modal-body").html("<p><strong>Error: </strong>" + data.error + "</p>");
+						} else {
+							$(".modal-body").html("<p>" + data.ok + "</p>");
+						}
+
+
+
+						$(".modal-footer").html("");
+						$("#modal-907432").remove();
+					},
+					error: function (xhr, status, error) {
+						$(".ajax-spinner").css("z-index", "999");
+						console.log('Error: ' + error.message);
+						//$(".modal-header").find("h4").html("Error!");
+						$(".modal-body").append("<p><strong>Error: </strong>" + error.message + "</p>");
+						//$(".modal-footer").html("");
+					},
+				});
+			});
+			/*$("#save").click(function() {
+				setTimeout(function() {
+					$(".modal-body").html("Enviado con éxito");
+					$(".modal-footer").html('<button type="button" data-dismiss="modal" class="btn btn-default">Close</button>');
+				}, 3000);
+			});*/
+
+block body
+	div.row
+		div.col-xs-12
+			div.page-header
+				h1 F.A.Q.
+	section.row
+		-var id = 0
+		-each faq in data
+			-id++
+			article.col-md-6
+				.panel.panel-default
+					.panel-heading
+						h3.panel-title
+							i.fa.fa-check-circle 
+							| &nbsp;
+							| #{faq.question}
+					.panel-body!= faq.response
+			- if (id % 2 == 0)
+				-id = 0
+				.clearfix.visible-md
+						
+	-if (isLogued === true)
+		section.row
+			article.col-md-6.column
+				a#modal-907432.btn.btn-primary.bnt-large(href='#modal-container-907432', role='button', data-toggle='modal') Launch demo modal
+				#modal-container-907432.modal.fade(role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+					.modal-dialog
+						.modal-content
+							.modal-header
+								button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+								h4#myModalLabel.modal-title
+									#titleModal Modal title
+							.modal-body
+								form(id="newFaq")
+									.form-group
+										label(for="question") Ingresa pregunta:
+										textarea.form-control#question(placeholder="Question something...", name="question", rows="3")
+										input(type="hidden", value="#{code}", name="_csrf")
+							.modal-footer
+								button.btn.btn-default(type='button', data-dismiss='modal') Close
+								button#save.btn.btn-primary(type='button') Save changes

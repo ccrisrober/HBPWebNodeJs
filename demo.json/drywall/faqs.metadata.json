@@ -1,0 +1,1 @@
+{ "indexes" : [ { "v" : 1, "name" : "_id_", "key" : { "_id" : 1 }, "ns" : "drywall.faqs" }, { "v" : 1, "name" : "question_1", "key" : { "question" : 1 }, "unique" : true, "ns" : "drywall.faqs", "background" : true, "safe" : null }, { "v" : 1, "name" : "isResponse_1", "key" : { "isResponse" : 1 }, "ns" : "drywall.faqs", "background" : true, "safe" : null } ] }

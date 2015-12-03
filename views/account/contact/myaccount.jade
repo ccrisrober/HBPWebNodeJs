@@ -1,0 +1,74 @@
+extends ../../../layouts/account
+
+block head
+	title All Contact
+
+block neck
+	link(rel='stylesheet', href='/views/account/index.min.css?#{cacheBreaker}')
+	style.
+		@media(min-width: 768px) {
+			.img-responsive {
+				height: 121px;
+			}
+			.accountuser {
+				padding: 1.25em;
+			}
+		}
+		.img-responsive {
+			margin: 0 auto;
+			margin-bottom: 5px;
+		}
+		.table-condensed {
+			width: 100%;
+		}
+		.accountuser {
+			padding: 0.75em;
+			padding-left: 1.5em;
+			padding-right: 1.5em;
+		}
+		.accountuser > div {
+			border: 2px solid white;
+			padding: 1.25em;
+			padding-left: 0em;
+			padding-right: 0em;
+		}
+
+block feet
+	script(src='/views/account/index.min.js?#{cacheBreaker}')
+	script(src="/views/account/contacts/index.js")
+	script.
+		function addAccount(i) {
+			alert("Añadir " + i);
+		}
+		function removeAccount(i) {
+			alert("Borrar " + i);
+		}
+
+	script(type="text/template", id="tmpl-contact")
+		.col-sm-6.accountuser.col-xs-12
+			.row.clearfix.accountrow
+				.col-md-3
+					img.img-rounded.img-responsive(src="https://fbcdn-sphotos-d-a.akamaihd.net/hphotos-ak-xap1/v/t1.0-9/10362580_10204997960047605_8726013217247719726_n.jpg?oh=53385bb54d5158cde3841530a69e049c&oe=54F77AFD&__gda__=1425463464_35f8701c93a9944b1446e91452b609f3", alt="#{user.username} profile image")
+				.col-md-9
+					table.details-view.table-striped.table-condensed
+						tr.odd
+							th First Name:
+							td first
+						tr.even
+							th Last Name:
+							td last
+						tr.odd
+							th Company:
+							td Company:  
+								i 
+									strong company
+					a.btn.btn-block.btn-success.btn-default.btn-sm(href='#', type='button', onclick="addAccount(#{i}); return false") Add
+					//	a.btn.btn-block.btn-danger.btn-default.btn-sm(href='#', type='button', onclick="removeAccount(#{i}); return false") Remove
+
+block body
+	.row
+		.col-xs-12
+			.page-header
+				h1 All Contacts
+	.row
+		#contacts
